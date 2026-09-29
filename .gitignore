@@ -1,0 +1,36 @@
+# See https://help.github.com/articles/ignoring-files for more about ignoring files.
+
+/assignment.txt
+/PLAN.md
+
+# Ignore bundler config and locally installed gems.
+/.bundle
+/vendor/bundle
+
+# Ignore all environment files.
+/.env*
+!/.env.example
+
+# Ignore all logfiles.
+/log/*
+!/log/.keep
+
+# Ignore the tmp folder entirely.
+/tmp/
+
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+
+# Ignore precompiled assets.
+/public/assets
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+/config/credentials/*.key
+
+# Ignore test coverage reports.
+/coverage
+
+# macOS metadata.
+.DS_Store
