@@ -1,26 +1,66 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Billetto" %></title>
+    <title><%= content_for(:title) || "Billetto Events" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Billetto">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 0 16px; color: #222; }
+      header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #ddd; }
+      header nav { display: flex; gap: 12px; align-items: center; }
+      .flash { padding: 8px 12px; margin: 12px 0; background: #fff3cd; }
+      .event { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #eee; }
+      .event img { width: 240px; height: 135px; object-fit: cover; flex-shrink: 0; background: #eee; }
+      .event h2 { margin: 0 0 4px; font-size: 1.15rem; }
+      .event time { color: #666; }
+      .votes { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+      .votes form { display: inline; }
+      .votes .current { font-weight: bold; }
+      @media (max-width: 600px) { .event { flex-direction: column; } .event img { width: 100%; height: auto; } }
+    </style>
   </head>
 
   <body>
-    <%= yield %>
+    <header>
+      <strong><%= link_to "Billetto Events", root_path %></strong>
+      <nav>
+        <% if signed_in? %>
+          <span>Signed in</span>
+          <button type="button" data-clerk-sign-out>Sign out</button>
+        <% else %>
+          <%= link_to "Sign in", sign_in_path %>
+          <%= link_to "Sign up", sign_up_path %>
+        <% end %>
+      </nav>
+    </header>
+
+    <% flash.each do |_type, message| %>
+      <p class="flash"><%= message %></p>
+    <% end %>
+
+    <main><%= yield %></main>
+
+    <% if clerk_publishable_key %>
+      <script async crossorigin="anonymous" type="text/javascript"
+              data-clerk-publishable-key="<%= clerk_publishable_key %>"
+              src="https://<%= clerk_frontend_api %>/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
+      <script>
+        window.addEventListener("load", async () => {
+          await window.Clerk.load();
+
+          const signIn = document.getElementById("clerk-sign-in");
+          if (signIn) window.Clerk.mountSignIn(signIn, { routing: "hash", signUpUrl: "<%= sign_up_path %>", fallbackRedirectUrl: "<%= root_path %>" });
+
+          const signUp = document.getElementById("clerk-sign-up");
+          if (signUp) window.Clerk.mountSignUp(signUp, { routing: "hash", signInUrl: "<%= sign_in_path %>", fallbackRedirectUrl: "<%= root_path %>" });
+
+          document.querySelectorAll("[data-clerk-sign-out]").forEach((button) => {
+            button.addEventListener("click", () => window.Clerk.signOut({ redirectUrl: "<%= root_path %>" }));
+          });
+        });
+      </script>
+    <% end %>
   </body>
 </html>

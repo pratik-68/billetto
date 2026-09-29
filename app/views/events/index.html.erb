@@ -1,0 +1,14 @@
+<h1>Upcoming events</h1>
+
+<% if @events.empty? %>
+  <p>No upcoming events yet. Import them with <code>bin/rails billetto:import</code>.</p>
+<% end %>
+
+<% @events.each do |event| %>
+  <%= render "events/event", event: event, votes: @votes.fetch(event.id) %>
+<% end %>
+
+<nav>
+  <%= link_to "← Previous", root_path(page: @page - 1) if @page > 1 %>
+  <%= link_to "Next →", root_path(page: @page + 1) if @next_page %>
+</nav>

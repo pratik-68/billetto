@@ -1,0 +1,22 @@
+<article class="event" id="<%= dom_id(event) %>">
+  <%= image_tag event.image_url, alt: "", loading: "lazy" if event.image_url %>
+  <div>
+    <h2><%= event.url ? link_to(event.title, event.url, rel: "noopener", target: "_blank") : event.title %></h2>
+    <time datetime="<%= event.starts_at.iso8601 %>"><%= l(event.starts_at, format: :long) %> UTC</time>
+    <% if event.city %><span> · <%= [ event.location_name, event.city ].compact.join(", ") %></span><% end %>
+    <p><%= truncate(strip_tags(event.description.to_s), length: 220, separator: " ") %></p>
+
+    <div class="votes">
+      <span class="<%= "current" if votes.current_vote == "up" %>">▲ <span data-upvotes><%= votes.upvotes %></span></span>
+      <span class="<%= "current" if votes.current_vote == "down" %>">▼ <span data-downvotes><%= votes.downvotes %></span></span>
+
+      <% if signed_in? %>
+        <%= button_to "Upvote", event_vote_path(event), method: :put, params: { vote: "up" }, disabled: votes.current_vote == "up" %>
+        <%= button_to "Downvote", event_vote_path(event), method: :put, params: { vote: "down" }, disabled: votes.current_vote == "down" %>
+        <%= button_to "Withdraw vote", event_vote_path(event), method: :delete if votes.current_vote %>
+      <% else %>
+        <%= link_to "Sign in to vote", sign_in_path %>
+      <% end %>
+    </div>
+  </div>
+</article>
