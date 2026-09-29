@@ -14,8 +14,10 @@ gem "puma", ">= 5.0"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
-# Event store for the voting feature [https://railseventstore.org] (includes aggregate_root)
+# Event store for the voting feature [https://railseventstore.org]
 gem "rails_event_store", "~> 3.0.1" # 3.1+ requires Ruby 3.3
+gem "aggregate_root", "~> 3.0.1"
+gem "arkency-command_bus", require: "arkency/command_bus"
 
 # HTTP client for the Billetto API
 gem "faraday", "~> 2.12"

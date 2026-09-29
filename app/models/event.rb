@@ -1,6 +1,9 @@
 # A public event ingested from the Billetto API. Billetto is the source of truth;
 # rows are upserted by `external_id` (see Events::Import).
 class Event < ApplicationRecord
+  has_one :vote_tally, dependent: :delete
+  has_many :event_votes, dependent: :delete_all
+
   # Uniqueness of external_id is enforced by a unique index: imports upsert on it,
   # which a per-record uniqueness validation could neither see nor make race-free.
   validates :external_id, presence: true
