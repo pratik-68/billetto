@@ -24,7 +24,7 @@ gem "faraday", "~> 2.12"
 gem "faraday-retry", "~> 2.2"
 
 # Clerk.com authentication (session token verification)
-gem "clerk-sdk-ruby", "~> 8.0", require: false
+gem "clerk-sdk-ruby", "~> 8.0", require: "clerk/rails" # adds Clerk::Rack::Middleware
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

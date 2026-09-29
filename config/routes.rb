@@ -1,14 +1,18 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  root "events#index"
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  resources :events, only: :index do
+    resource :vote, only: %i[update destroy]
+  end
+
+  # Pages hosting Clerk's prebuilt sign-in / sign-up components.
+  get "sign-in", to: "auth#sign_in", as: :sign_in
+  get "sign-up", to: "auth#sign_up", as: :sign_up
+
+  # Rails Event Store browser (development only).
+  if Rails.env.development?
+    mount RubyEventStore::Browser::App.for(event_store_locator: -> { Rails.configuration.event_store }), at: "/res"
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
