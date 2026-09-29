@@ -16,14 +16,6 @@ RSpec.describe Event do
     end
   end
 
-  it "requires a unique external_id" do
-    create(:event, external_id: "42")
-    event.external_id = "42"
-
-    expect(event).not_to be_valid
-    expect(event.errors[:external_id]).to include("has already been taken")
-  end
-
   it "limits the title length" do
     event.title = "a" * 256
 

@@ -1,7 +1,9 @@
 # A public event ingested from the Billetto API. Billetto is the source of truth;
 # rows are upserted by `external_id` (see Events::Import).
 class Event < ApplicationRecord
-  validates :external_id, presence: true, uniqueness: true
+  # Uniqueness of external_id is enforced by a unique index: imports upsert on it,
+  # which a per-record uniqueness validation could neither see nor make race-free.
+  validates :external_id, presence: true
   validates :title, presence: true, length: { maximum: 255 }
   validates :starts_at, :synced_at, presence: true
   validate :ends_at_not_before_starts_at
